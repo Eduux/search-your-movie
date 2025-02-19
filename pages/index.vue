@@ -4,42 +4,55 @@
       Search our movie by text or description with ai
     </h1>
     <div class="mb-6">
-      <input
-        v-model="searchQuery"
-        @input="searchMovies"
-        type="text"
-        :placeholder="
-          searchType === 'TITLE'
-            ? 'Search movie by name...'
-            : 'Search movie with ai...'
-        "
-        class="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white"
-        :disabled="isLoading"
-      />
-      <div class="flex gap-2 mt-2">
-        <button
-          :class="{
-            'bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer':
-              searchType === 'TITLE',
-            'bg-gray-200 text-gray-600 px-4 py-2 rounded-md cursor-pointer':
-              searchType === 'AI',
-          }"
-          @click="handleSelectTypeSearch('TITLE')"
-        >
-          Title
-        </button>
-        <button
-          :class="{
-            'bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer':
-              searchType === 'AI',
-            'bg-gray-200 text-gray-600 px-4 py-2 rounded-md cursor-pointer':
-              searchType === 'TITLE',
-          }"
-          @click="handleSelectTypeSearch('AI')"
-        >
-          AI ({{ remainingRequests }} searches left)
-        </button>
-      </div>
+      <form @submit.prevent="performSearch" class="space-y-2">
+        <input
+          v-model="searchQuery"
+          type="text"
+          :placeholder="
+            searchType === 'TITLE'
+              ? 'Search movie by name...'
+              : 'Search movie with ai...'
+          "
+          class="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white"
+          :disabled="isLoading"
+        />
+        <div class="flex gap-2">
+          <button
+            type="button"
+            :class="{
+              'bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer':
+                searchType === 'TITLE',
+              'bg-gray-200 text-gray-600 px-4 py-2 rounded-md cursor-pointer':
+                searchType === 'AI',
+            }"
+            @click="handleSelectTypeSearch('TITLE')"
+          >
+            Title
+          </button>
+          <button
+            type="button"
+            :class="{
+              'bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer':
+                searchType === 'AI',
+              'bg-gray-200 text-gray-600 px-4 py-2 rounded-md cursor-pointer':
+                searchType === 'TITLE',
+            }"
+            :disabled="searchType === 'AI' && remainingRequests <= 0"
+            @click="handleSelectTypeSearch('AI')"
+          >
+            AI ({{ remainingRequests }} searches left)
+          </button>
+          <button
+            type="submit"
+            class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            :disabled="
+              isLoading || (searchType === 'AI' && remainingRequests <= 0)
+            "
+          >
+            Search
+          </button>
+        </div>
+      </form>
     </div>
 
     <div v-if="isLoading" class="flex justify-center items-center py-8">
@@ -75,14 +88,6 @@ const searchType = ref<"AI" | "TITLE">("TITLE");
 const isLoading = ref(false);
 const remainingRequests = ref(getRemainingRequests());
 
-const debounce = (fn: Function, delay: number) => {
-  let timeoutId: NodeJS.Timeout;
-  return (...args: any[]) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn(...args), delay);
-  };
-};
-
 onMounted(async () => {
   movies.value = await fetchPopularMovies();
 });
@@ -101,10 +106,9 @@ const performSearch = async () => {
     } else {
       movies.value = await fetchPopularMovies();
     }
+    searchQuery.value = "";
   } finally {
     isLoading.value = false;
   }
 };
-
-const searchMovies = debounce(performSearch, 700);
 </script>
