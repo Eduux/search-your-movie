@@ -37,7 +37,7 @@
           }"
           @click="handleSelectTypeSearch('AI')"
         >
-          AI
+          AI ({{ remainingRequests }} searches left)
         </button>
       </div>
     </div>
@@ -49,32 +49,31 @@
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <MovieCard
-        v-for="movie in movies"
-        :key="movie.id"
-        :movie="movie"
-        @toggleFavorite="toggleFavorite"
-      />
+      <MovieCard v-for="movie in movies" :key="movie.id" :movie="movie" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useMovies } from "~/composables/useMovies";
-import { useChat } from "ai/vue";
+import { useMovies, type Movie } from "~/composables/useMovies";
 import { useHead } from "nuxt/app";
 
 useHead({
   title: "Search your movie",
 });
 
-const { fetchPopularMovies, searchMovies: searchMoviesApi } = useMovies();
+const {
+  fetchPopularMovies,
+  searchMovies: searchMoviesApi,
+  getRemainingRequests,
+} = useMovies();
 
-const movies = ref([]);
+const movies = ref<Movie[]>([]);
 const searchQuery = ref("");
 const searchType = ref<"AI" | "TITLE">("TITLE");
 const isLoading = ref(false);
+const remainingRequests = ref(getRemainingRequests());
 
 const debounce = (fn: Function, delay: number) => {
   let timeoutId: NodeJS.Timeout;
@@ -99,6 +98,7 @@ const performSearch = async () => {
     isLoading.value = true;
     if (searchQuery.value) {
       movies.value = await searchMoviesApi(searchQuery.value, searchType.value);
+      remainingRequests.value = getRemainingRequests();
     } else {
       movies.value = await fetchPopularMovies();
     }
