@@ -72,4 +72,6 @@ yarn preview
 bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Live demo
+
+[https://search-your-movie-two.vercel.app/](https://search-your-movie-two.vercel.app/)
