@@ -90,7 +90,6 @@ onMounted(async () => {
 const handleSelectTypeSearch = (type: "AI" | "TITLE") => {
   searchQuery.value = "";
   searchType.value = type;
-  searchMovies();
 };
 
 const performSearch = async () => {
