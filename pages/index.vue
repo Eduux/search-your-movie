@@ -3,7 +3,7 @@
     <h1 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white">
       Search our movie by text or description with ai
     </h1>
-    <div class="mb-6 space-y-2">
+    <div class="mb-6">
       <input
         v-model="searchQuery"
         @input="searchMovies"
@@ -16,7 +16,7 @@
         class="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white"
         :disabled="isLoading"
       />
-      <div class="flex gap-2">
+      <div class="flex gap-2 mt-2">
         <button
           :class="{
             'bg-blue-500 text-white px-4 py-2 rounded-md cursor-pointer':
