@@ -60,7 +60,7 @@ import { useMovies, type Movie } from "~/composables/useMovies";
 import { useHead } from "nuxt/app";
 
 useHead({
-  title: "Search your movie",
+  title: "Search your movies",
 });
 
 const {
