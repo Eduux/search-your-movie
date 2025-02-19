@@ -16,7 +16,7 @@
           class="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white"
           :disabled="isLoading"
         />
-        <div class="flex gap-2">
+        <div class="flex gap-2 mt-2">
           <button
             type="button"
             :class="{
